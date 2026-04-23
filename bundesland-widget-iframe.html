@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bundesland-Vergleich – Solaranlage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: #ededed;
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .bb-widget {
+    background: #ededed;
+    padding: 40px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .bb-widget__heading {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111;
+    text-align: center;
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+  }
+
+  .bb-widget__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .bb-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 2.5px solid #111;
+    border-radius: 10px;
+    padding: 22px 20px;
+    min-height: 78px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .bb-tile:hover {
+    background: #dcfce7;
+    border-color: #16a34a;
+  }
+
+  .bb-tile:active {
+    transform: scale(0.98);
+  }
+
+  .bb-tile__abbr {
+    font-size: 18px;
+    font-weight: 700;
+    color: #22c55e;
+    margin-right: 14px;
+    letter-spacing: 0.02em;
+    min-width: 32px;
+    text-align: left;
+  }
+
+  .bb-tile__name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: -0.005em;
+  }
+
+  /* Mobile: single column */
+  @media (max-width: 600px) {
+    .bb-widget {
+      padding: 28px 16px;
+    }
+
+    .bb-widget__heading {
+      font-size: 20px;
+      margin-bottom: 24px;
+    }
+
+    .bb-widget__grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .bb-tile {
+      padding: 20px 18px;
+      min-height: 72px;
+      justify-content: flex-start;
+    }
+
+    .bb-tile__abbr {
+      font-size: 17px;
+      margin-right: 12px;
+    }
+
+    .bb-tile__name {
+      font-size: 16px;
+    }
+  }
+
+  /* Focus ring for keyboard nav */
+  .bb-tile:focus-visible {
+    outline: 3px solid #16a34a;
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="bb-widget" role="region" aria-label="Bundesland auswählen">
+  <h2 class="bb-widget__heading">In welchem Bundesland leben Sie?</h2>
+  <div class="bb-widget__grid" id="bb-grid"></div>
+</div>
+
+<script>
+(function() {
+  var FUNNEL_BASE = 'https://www.top10-anbieter.de/solar-desktop3';
+  var FUNNEL_HASH = '#immobilie';
+  var UTM = 'utm_source=ad20&utm_medium=advertorial&utm_campaign=bundesland-widget';
+
+  // Order matches the reference Unbounce page: left column then right column, alphabetical
+  var STATES = [
+    { abbr: 'BW', name: 'Baden-Württemberg' },
+    { abbr: 'BY', name: 'Bayern' },
+    { abbr: 'BE', name: 'Berlin' },
+    { abbr: 'BB', name: 'Brandenburg' },
+    { abbr: 'HB', name: 'Bremen' },
+    { abbr: 'HH', name: 'Hamburg' },
+    { abbr: 'HE', name: 'Hessen' },
+    { abbr: 'MV', name: 'Mecklenburg-Vorpommern' },
+    { abbr: 'NI', name: 'Niedersachsen' },
+    { abbr: 'NW', name: 'Nordrhein-Westfalen' },
+    { abbr: 'RP', name: 'Rheinland-Pfalz' },
+    { abbr: 'SL', name: 'Saarland' },
+    { abbr: 'ST', name: 'Sachsen-Anhalt' },
+    { abbr: 'SN', name: 'Sachsen' },
+    { abbr: 'SH', name: 'Schleswig-Holstein' },
+    { abbr: 'TH', name: 'Thüringen' }
+  ];
+
+  var grid = document.getElementById('bb-grid');
+  var frag = document.createDocumentFragment();
+
+  STATES.forEach(function(s) {
+    var a = document.createElement('a');
+    a.className = 'bb-tile';
+    a.href = FUNNEL_BASE + '?' + UTM + '&utm_content=' + s.abbr + FUNNEL_HASH;
+    a.target = '_top'; // Break out of iframe
+    a.rel = 'noopener';
+    a.setAttribute('aria-label', s.name);
+
+    var abbr = document.createElement('span');
+    abbr.className = 'bb-tile__abbr';
+    abbr.textContent = s.abbr;
+
+    var name = document.createElement('span');
+    name.className = 'bb-tile__name';
+    name.textContent = s.name;
+
+    a.appendChild(abbr);
+    a.appendChild(name);
+    frag.appendChild(a);
+  });
+
+  grid.appendChild(frag);
+
+  // Post height to parent so the iframe can auto-resize (optional, parent must listen)
+  function postHeight() {
+    try {
+      var h = document.documentElement.scrollHeight;
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: 'bb-bundesland-widget-height', height: h }, '*');
+      }
+    } catch (e) {}
+  }
+
+  window.addEventListener('load', postHeight);
+  window.addEventListener('resize', postHeight);
+})();
+</script>
+
+</body>
+</html>
