@@ -9,9 +9,22 @@
 (function() {
   'use strict';
 
-  var FUNNEL_BASE = 'https://www.top10-anbieter.de/solar-desktop3';
+  // Funnel URLs — desktop vs mobile. The widget auto-picks based on viewport width.
+  // To change the mobile funnel URL later, edit FUNNEL_MOBILE_BASE below.
+  var FUNNEL_DESKTOP_BASE = 'https://www.top10-anbieter.de/solar-desktop3';
+  var FUNNEL_MOBILE_BASE  = 'https://www.top10-anbieter.de/solar-mobile3';
   var FUNNEL_HASH = '#immobilie';
   var UTM = 'utm_source=ad20&utm_medium=advertorial&utm_campaign=bundesland-widget';
+  var MOBILE_MQ = '(max-width: 600px)';
+
+  function isMobile() {
+    return window.matchMedia(MOBILE_MQ).matches;
+  }
+
+  function buildUrl(abbr) {
+    var base = isMobile() ? FUNNEL_MOBILE_BASE : FUNNEL_DESKTOP_BASE;
+    return base + '?' + UTM + '&utm_content=' + abbr + FUNNEL_HASH;
+  }
 
   var STATES = [
     { abbr: 'BW', name: 'Baden-Württemberg' },
@@ -88,7 +101,8 @@
     STATES.forEach(function(s) {
       var a = document.createElement('a');
       a.className = 'bb-tile';
-      a.href = FUNNEL_BASE + '?' + UTM + '&utm_content=' + s.abbr + FUNNEL_HASH;
+      a.setAttribute('data-abbr', s.abbr);
+      a.href = buildUrl(s.abbr);
       a.target = '_top';
       a.rel = 'noopener';
       a.setAttribute('aria-label', s.name);
@@ -137,6 +151,21 @@
     injectFont();
     injectStyle();
     target.appendChild(buildWidget());
+
+    // Keep hrefs in sync with viewport (rotation, resize, so right-click "copy link" is correct)
+    function refreshHrefs() {
+      var tiles = target.querySelectorAll('.bb-tile');
+      for (var i = 0; i < tiles.length; i++) {
+        tiles[i].href = buildUrl(tiles[i].getAttribute('data-abbr'));
+      }
+    }
+
+    var mql = window.matchMedia(MOBILE_MQ);
+    if (mql.addEventListener) {
+      mql.addEventListener('change', refreshHrefs);
+    } else if (mql.addListener) {
+      mql.addListener(refreshHrefs); // Safari < 14 fallback
+    }
   }
 
   if (document.readyState === 'loading') {
