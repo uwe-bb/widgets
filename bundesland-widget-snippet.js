@@ -15,7 +15,7 @@
   var FUNNEL_MOBILE_BASE  = 'https://www.top10-anbieter.de/solar-mobile3';
   var FUNNEL_HASH = '#immobilie';
   var UTM = 'utm_source=ad20&utm_medium=advertorial&utm_campaign=bundesland-widget';
-  var MOBILE_MQ = '(max-width: 600px)';
+  var MOBILE_MQ = '(max-width: 640px)';
 
   function isMobile() {
     return window.matchMedia(MOBILE_MQ).matches;
@@ -48,21 +48,21 @@
   // Scoped CSS — prefixed with .bb-widget to avoid clashing with host page styles
   var CSS = [
     '.bb-widget,.bb-widget *{box-sizing:border-box;margin:0;padding:0;}',
-    '.bb-widget{background:#ededed;padding:40px 24px;max-width:900px;margin:0 auto;font-family:"Lato",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;}',
-    '.bb-widget__heading{font-size:22px;font-weight:700;color:#111;text-align:center;margin-bottom:32px;letter-spacing:-0.01em;}',
-    '.bb-widget__grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}',
-    '.bb-tile{display:flex;align-items:center;justify-content:center;background:#fff;border:2.5px solid #111;border-radius:10px;padding:22px 20px;min-height:78px;text-decoration:none;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,transform .1s ease;-webkit-tap-highlight-color:transparent;}',
-    '.bb-tile:hover{background:#dcfce7;border-color:#16a34a;}',
-    '.bb-tile:active{transform:scale(0.98);}',
-    '.bb-tile:focus-visible{outline:3px solid #16a34a;outline-offset:2px;}',
-    '.bb-tile__abbr{font-size:18px;font-weight:700;color:#22c55e;margin-right:14px;letter-spacing:.02em;min-width:32px;text-align:left;}',
-    '.bb-tile__name{font-size:17px;font-weight:700;color:#111;letter-spacing:-0.005em;}',
-    '@media (max-width:600px){',
-      '.bb-widget{padding:28px 16px;}',
-      '.bb-widget__heading{font-size:20px;margin-bottom:24px;}',
-      '.bb-widget__grid{grid-template-columns:1fr;gap:14px;}',
-      '.bb-tile{padding:20px 18px;min-height:72px;justify-content:flex-start;}',
-      '.bb-tile__abbr{font-size:17px;margin-right:12px;}',
+    '.bb-widget{background:#EAEAEB;padding:28px 24px 32px;max-width:1000px;margin:0 auto;font-family:"Roboto",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}',
+    '.bb-widget__heading{font-size:22px;font-weight:700;color:#0A0908;text-align:center;margin-bottom:28px;letter-spacing:-0.005em;}',
+    '.bb-widget__grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;}',
+    '.bb-tile{display:flex;align-items:center;justify-content:flex-start;gap:14px;background:#fff;border:1px solid #0A0908;border-radius:6px;padding:22px 28px;text-decoration:none;cursor:pointer;font-size:17px;font-weight:500;line-height:1.2;transition:border-color .12s cubic-bezier(.22,.61,.36,1),background .12s cubic-bezier(.22,.61,.36,1),transform .12s cubic-bezier(.22,.61,.36,1);-webkit-tap-highlight-color:transparent;}',
+    '.bb-tile:hover{background:#E6F5ED;border-color:#30AB66;}',
+    '.bb-tile:active{transform:translateY(1px);}',
+    '.bb-tile:focus-visible{outline:3px solid #30AB66;outline-offset:2px;}',
+    '.bb-tile__abbr{font-size:17px;font-weight:700;color:#30AB66;letter-spacing:.01em;min-width:36px;text-align:left;}',
+    '.bb-tile__name{font-size:17px;font-weight:700;color:#0A0908;letter-spacing:-0.005em;}',
+    '@media (max-width:640px){',
+      '.bb-widget{padding:20px 14px 24px;}',
+      '.bb-widget__heading{font-size:18px;margin-bottom:20px;}',
+      '.bb-widget__grid{grid-template-columns:1fr;gap:12px;}',
+      '.bb-tile{padding:18px 20px;font-size:16px;}',
+      '.bb-tile__abbr{font-size:16px;}',
       '.bb-tile__name{font-size:16px;}',
     '}'
   ].join('');
@@ -72,7 +72,7 @@
     var link = document.createElement('link');
     link.id = 'bb-widget-font';
     link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap';
+    link.href = 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap';
     document.head.appendChild(link);
   }
 
