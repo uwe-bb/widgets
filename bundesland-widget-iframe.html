@@ -134,8 +134,11 @@
   var FUNNEL_DESKTOP_BASE = 'https://www.top10-anbieter.de/solar-desktop3';
   var FUNNEL_MOBILE_BASE  = 'https://www.top10-anbieter.de/solar-mobile3';
   var FUNNEL_HASH = '#immobilie';
-  var UTM = 'utm_source=ad20&utm_medium=advertorial&utm_campaign=bundesland-widget';
+  var PARAMS = 'bcid=usjr74ngzs&publisher=Welt&publisher-content=welt-solar-artikel';
   var MOBILE_MQ = '(max-width: 640px)';
+  var _q; try { _q = new URL(location.href).searchParams; } catch(e) { _q = { get: function(){ return null; } }; }
+  var PASS_KEYS = ['gclid','msclkid','matchtype','utm_source','utm_campaign','keyword','placement','device'];
+  var passPV = PASS_KEYS.reduce(function(a,k){ var v=_q.get(k); if(v) a.push(encodeURIComponent(k)+'='+encodeURIComponent(v)); return a; },[]).join('&');
 
   // Order matches the reference Unbounce page: left column then right column, alphabetical
   var STATES = [
@@ -163,7 +166,7 @@
 
   function buildUrl(abbr) {
     var base = isMobile() ? FUNNEL_MOBILE_BASE : FUNNEL_DESKTOP_BASE;
-    return base + '?' + UTM + '&utm_content=' + abbr + FUNNEL_HASH;
+    return base + '?' + PARAMS + '&utm_content=' + abbr + (passPV ? '&' + passPV : '') + FUNNEL_HASH;
   }
 
   var grid = document.getElementById('bb-grid');
