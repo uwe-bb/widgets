@@ -208,18 +208,22 @@
     mql.addListener(refreshHrefs); // Safari < 14 fallback
   }
 
-  // Post height to parent so the iframe can auto-resize (optional, parent must listen)
+  // Post height to parent so the iframe can auto-resize (parent must listen for wp_widget_resize)
+  var lastH = 0;
   function postHeight() {
     try {
       var h = document.documentElement.scrollHeight;
-      if (window.parent !== window) {
-        window.parent.postMessage({ type: 'bb-bundesland-widget-height', height: h }, '*');
+      if (h !== lastH && window.parent !== window) {
+        lastH = h;
+        window.parent.postMessage({ type: 'wp_widget_resize', height: h }, '*');
       }
     } catch (e) {}
   }
-
-  window.addEventListener('load', postHeight);
-  window.addEventListener('resize', postHeight);
+  function schedulePost() { window.requestAnimationFrame(postHeight); }
+  window.addEventListener('load', schedulePost);
+  window.addEventListener('resize', schedulePost);
+  if (window.ResizeObserver) new ResizeObserver(schedulePost).observe(document.documentElement);
+  schedulePost();
 })();
 </script>
 
