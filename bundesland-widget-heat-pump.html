@@ -23,18 +23,20 @@ html,body{background:#EAEAEB;color:#0A0908;font-family:Roboto,system-ui,-apple-s
 <section class="widget" aria-labelledby="wp-widget-title">
   <h2 class="widget__title" id="wp-widget-title">In welchem Bundesland leben Sie?</h2>
   <div class="widget__grid" role="list"></div>
-  <noscript><ul style="list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:12px"><li><a href="https://www.top10-anbieter.de/waermepumpe-desktop-2?utm_source=ad20&amp;utm_medium=advertorial&amp;utm_campaign=bundesland-widget&amp;utm_content=noscript" target="_blank" rel="noopener noreferrer" style="display:block;padding:18px;border:1px solid #0A0908;border-radius:6px;background:#fff;color:#0A0908;text-decoration:none">Bundesland wählen &rarr;</a></li></ul></noscript>
+  <noscript><ul style="list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:12px"><li><a href="https://www.top10-anbieter.de/waermepumpe-desktop-2?bcid=3jf95jdleq&amp;publisher=Welt&amp;publisher-content=welt-waermepumpe-artikel&amp;utm_content=noscript" target="_blank" rel="noopener noreferrer" style="display:block;padding:18px;border:1px solid #0A0908;border-radius:6px;background:#fff;color:#0A0908;text-decoration:none">Bundesland wählen &rarr;</a></li></ul></noscript>
 </section>
 <script>
 (function(){
-  var desktop='https://www.top10-anbieter.de/waermepumpe-desktop-2?utm_source=ad20&utm_medium=advertorial&utm_campaign=bundesland-widget';
-  var mobile='https://www.top10-anbieter.de/waermepumpe-mobile-2?utm_source=ad20&utm_medium=advertorial&utm_campaign=bundesland-widget';
+  var desktop='https://www.top10-anbieter.de/waermepumpe-desktop-2?bcid=3jf95jdleq&publisher=Welt&publisher-content=welt-waermepumpe-artikel';
+  var mobile='https://www.top10-anbieter.de/waermepumpe-mobile-2?bcid=3jf95jdleq&publisher=Welt&publisher-content=welt-waermepumpe-artikel';
   try{
     var q=new URL(location.href).searchParams,g=q.get('funnel'),d=q.get('funnelDesktop'),m=q.get('funnelMobile');
     if(g)desktop=mobile=g;
     if(d)desktop=d;
     if(m)mobile=m;
   }catch(e){}
+  var PASS=['gclid','msclkid','matchtype','utm_source','utm_campaign','keyword','placement','device'];
+  var pass=PASS.reduce(function(a,k){try{var v=q.get(k);if(v)a.push(encodeURIComponent(k)+'='+encodeURIComponent(v));}catch(e){}return a;},[]).join('&');
   function isMobile(){
     try{
       var w=(window.top&&window.top.innerWidth)||window.innerWidth||0;
@@ -45,7 +47,7 @@ html,body{background:#EAEAEB;color:#0A0908;font-family:Roboto,system-ui,-apple-s
   }
   var funnel=isMobile()?mobile:desktop;
   var states=[['BW','Baden-Württemberg'],['BY','Bayern'],['BE','Berlin'],['BB','Brandenburg'],['HB','Bremen'],['HH','Hamburg'],['HE','Hessen'],['MV','Mecklenburg-Vorpommern'],['NI','Niedersachsen'],['NW','Nordrhein-Westfalen'],['RP','Rheinland-Pfalz'],['SL','Saarland'],['ST','Sachsen-Anhalt'],['SN','Sachsen'],['SH','Schleswig-Holstein'],['TH','Thüringen']];
-  function href(code){var sep=funnel.indexOf('?')===-1?'?':'&';return funnel+sep+'utm_content='+encodeURIComponent(code)+'&bundesland='+encodeURIComponent(code)}
+  function href(code){return funnel+'&utm_content='+encodeURIComponent(code)+'&bundesland='+encodeURIComponent(code)+(pass?'&'+pass:'')}
   function track(code,name){
     var payload={event:'wp_widget_state_click',widget:'bundesland_tiles',state_code:code,state_name:name};
     try{
