@@ -36,7 +36,10 @@ html,body{background:#EAEAEB;color:#0A0908;font-family:Roboto,system-ui,-apple-s
     if(m)mobile=m;
   }catch(e){}
   var PASS=['gclid','msclkid','matchtype','utm_source','utm_campaign','keyword','placement','device'];
-  var pass=PASS.reduce(function(a,k){try{var v=q.get(k);if(v)a.push(encodeURIComponent(k)+'='+encodeURIComponent(v));}catch(e){}return a;},[]).join('&');
+  var passMap={};
+  PASS.forEach(function(k){try{var v=q.get(k);if(v)passMap[k]=v;}catch(e){}});
+  try{var rq=new URL(document.referrer).searchParams;PASS.forEach(function(k){if(!passMap[k]){var v=rq.get(k);if(v)passMap[k]=v;}});}catch(e){}
+  var pass=Object.keys(passMap).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(passMap[k]);}).join('&');
   function isMobile(){
     try{
       var w=(window.top&&window.top.innerWidth)||window.innerWidth||0;
