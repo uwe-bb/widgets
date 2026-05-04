@@ -138,7 +138,10 @@
   var MOBILE_MQ = '(max-width: 640px)';
   var _q; try { _q = new URL(location.href).searchParams; } catch(e) { _q = { get: function(){ return null; } }; }
   var PASS_KEYS = ['gclid','msclkid','matchtype','utm_source','utm_campaign','keyword','placement','device'];
-  var passPV = PASS_KEYS.reduce(function(a,k){ var v=_q.get(k); if(v) a.push(encodeURIComponent(k)+'='+encodeURIComponent(v)); return a; },[]).join('&');
+  var passMapPV = {};
+  PASS_KEYS.forEach(function(k){ var v=_q.get(k); if(v) passMapPV[k]=v; });
+  try{ var rqPV=new URL(document.referrer).searchParams; PASS_KEYS.forEach(function(k){ if(!passMapPV[k]){ var v=rqPV.get(k); if(v) passMapPV[k]=v; } }); }catch(e){}
+  var passPV = Object.keys(passMapPV).map(function(k){ return encodeURIComponent(k)+'='+encodeURIComponent(passMapPV[k]); }).join('&');
 
   // Order matches the reference Unbounce page: left column then right column, alphabetical
   var STATES = [
