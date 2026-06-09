@@ -45,13 +45,16 @@ Account 2 funnels are used here because there is no account 1 equivalent with th
 ### Hard-coded on every tile click
 | Parameter | Heat pump | Solar |
 |-----------|-----------|-------|
+| `utm_source` | `welt.de` | `welt.de` |
+| `utm_medium` | `advertorial` | `advertorial` |
+| `utm_campaign` | `hp_june26` | `solar_june26` |
 | `bcid` | `3jf95jdleq` | `usjr74ngzs` |
 | `publisher` | `Welt` | `Welt` |
-| `publisher-content` | `welt-waermepumpe-artikel` | `welt-solar-artikel` |
+| `publisher-content` | `welt-heat-pump-article` | `welt-solar-article` |
 | `utm_content` | State code (e.g. `BY`) | State code (e.g. `BY`) |
 | `bundesland` | State code | — |
 
-`bcid` identifies the Google Ads account/campaign in Heyflow and routes to the correct configuration. `publisher` and `publisher-content` are stored in Zapier and used for Tableau reporting.
+`utm_source` / `utm_medium` / `utm_campaign` are required for Tableau reporting. `bcid` identifies the Google Ads account/campaign in Heyflow and routes to the correct configuration. `publisher` and `publisher-content` are stored in Zapier and used for Tableau reporting. The `utm_campaign` month tag (`june26`) is updated per campaign launch month.
 
 ### Google Ads tracking template
 ```
@@ -61,7 +64,7 @@ Account 2 funnels are used here because there is no account 1 equivalent with th
 `bcid` is intentionally excluded from the tracking template — it lives at the destination link level, not the landing page level.
 
 ### Passthrough params (gclid etc.)
-The widgets are built to forward `gclid`, `msclkid`, `matchtype`, `utm_source`, `utm_campaign`, `keyword`, `placement`, and `device` from their own src URL to every tile link. Two fallback mechanisms are implemented:
+The widgets are built to forward `gclid`, `msclkid`, `matchtype`, `keyword`, `placement`, and `device` from their own src URL to every tile link. (`utm_source` / `utm_campaign` are intentionally NOT passed through — they're hardcoded to `welt.de` / `hp_june26` so advertorial traffic always attributes to Welt, not to Google's own values.) Two fallback mechanisms are implemented:
 1. **Widget src URL params** — works if the publisher adds a forwarding script (see below)
 2. **`document.referrer` parsing** — attempted automatically, but confirmed not working due to Welt's strict referrer policy (`strict-origin-when-cross-origin`)
 
