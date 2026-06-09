@@ -35,7 +35,7 @@ Every tile link carries the following query parameters.
 |-----------|-------|---------|
 | `utm_source` | `welt.de` | Traffic source (Tableau) |
 | `utm_medium` | `advertorial` | Medium (Tableau) |
-| `utm_campaign` | `wp_june26` | Campaign + launch month (Tableau) |
+| `utm_campaign` | `hp_june26` | Campaign + launch month (Tableau) |
 | `bcid` | `3jf95jdleq` | Overrides Heyflow default campaign → **Heat Pump DACH 3** |
 | `publisher` | `Welt` | Stored in Zapier |
 | `publisher-content` | `welt-heat-pump-article` | Free-form label (Zapier → Tableau) |
@@ -44,7 +44,7 @@ Every tile link carries the following query parameters.
 
 **Resulting link (desktop, example for Bayern):**
 ```
-https://www.top10-anbieter.de/waermepumpe-desktop-2?utm_source=welt.de&utm_medium=advertorial&utm_campaign=wp_june26&bcid=3jf95jdleq&publisher=Welt&publisher-content=welt-heat-pump-article&utm_content=BY&bundesland=BY
+https://www.top10-anbieter.de/waermepumpe-desktop-2?utm_source=welt.de&utm_medium=advertorial&utm_campaign=hp_june26&bcid=3jf95jdleq&publisher=Welt&publisher-content=welt-heat-pump-article&utm_content=BY&bundesland=BY
 ```
 
 ### Solar / Photovoltaik
@@ -85,7 +85,7 @@ correct campaign in Tableau. Values verified against the
 Both widgets also try to forward `gclid`, `msclkid`, `matchtype`, `keyword`,
 `placement`, and `device` from the page URL / referrer to the tile links, for
 Google/Microsoft Ads attribution. `utm_source` / `utm_campaign` are deliberately
-**not** forwarded — they stay hardcoded to `welt.de` / `wp_june26` so advertorial
+**not** forwarded — they stay hardcoded to `welt.de` / `hp_june26` so advertorial
 traffic always attributes to Welt. The passthrough is currently **dormant**: Welt's
 referrer policy strips the params and Welt IT declined to add a forwarding script,
 so nothing arrives. See `CONTEXT.md` for the full story.
