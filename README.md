@@ -20,8 +20,8 @@ The Welt advertorials embed these HTML files directly via a raw `<iframe>` tag.
 
 | Widget | Desktop | Mobile |
 |--------|---------|--------|
-| Heat pump | `top10-anbieter.de/waermepumpe-desktop-2` | `top10-anbieter.de/waermepumpe-mobile-2` |
-| Solar | `top10-anbieter.de/solar-desktop3` | `top10-anbieter.de/solar-mobile3` |
+| Heat pump | `vergleich.top10-waermepumpen-angebotsvergleich.de/waermepumpe-desktop-2` | `vergleich.top10-waermepumpen-angebotsvergleich.de/waermepumpe-mobile-2` |
+| Solar | `vergleich.top10-photovoltaikanlage-angebotsvergleich.de/solar-desktop3` | `vergleich.top10-photovoltaikanlage-angebotsvergleich.de/solar-mobile3` |
 
 The widget auto-detects mobile vs. desktop and picks the matching funnel.
 
@@ -41,10 +41,11 @@ Every tile link carries the following query parameters.
 | `publisher-content` | `welt-heat-pump-article` | Free-form label (Zapier → Tableau) |
 | `utm_content` | state code (e.g. `BY`) | Which tile was clicked |
 | `bundesland` | state code | Pre-selects the state in the funnel |
+| `#building-type` | (hash) | Pre-selects building type in Heyflow |
 
 **Resulting link (desktop, example for Bayern):**
 ```
-https://www.top10-anbieter.de/waermepumpe-desktop-2?utm_source=welt.de&utm_medium=advertorial&utm_campaign=hp_june26&bcid=3jf95jdleq&publisher=Welt&publisher-content=welt-heat-pump-article&utm_content=BY&bundesland=BY
+https://vergleich.top10-waermepumpen-angebotsvergleich.de/waermepumpe-desktop-2?utm_source=welt.de&utm_medium=advertorial&utm_campaign=hp_june26&bcid=3jf95jdleq&publisher=Welt&publisher-content=welt-heat-pump-article&utm_content=BY&bundesland=BY#building-type
 ```
 
 ### Solar / Photovoltaik
@@ -62,7 +63,7 @@ https://www.top10-anbieter.de/waermepumpe-desktop-2?utm_source=welt.de&utm_mediu
 
 **Resulting link (desktop, example for Bayern):**
 ```
-https://www.top10-anbieter.de/solar-desktop3?utm_source=welt.de&utm_medium=advertorial&utm_campaign=solar_june26&bcid=usjr74ngzs&publisher=Welt&publisher-content=welt-solar-article&utm_content=BY#immobilie
+https://vergleich.top10-photovoltaikanlage-angebotsvergleich.de/solar-desktop3?utm_source=welt.de&utm_medium=advertorial&utm_campaign=solar_june26&bcid=usjr74ngzs&publisher=Welt&publisher-content=welt-solar-article&utm_content=BY#immobilie
 ```
 
 ### bcid reference
