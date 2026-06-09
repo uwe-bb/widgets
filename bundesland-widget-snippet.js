@@ -14,8 +14,14 @@
   var FUNNEL_DESKTOP_BASE = 'https://www.top10-anbieter.de/solar-desktop3';
   var FUNNEL_MOBILE_BASE  = 'https://www.top10-anbieter.de/solar-mobile3';
   var FUNNEL_HASH = '#immobilie';
-  var UTM = 'utm_source=ad20&utm_medium=advertorial&utm_campaign=bundesland-widget';
+  var PARAMS = 'bcid=usjr74ngzs&publisher=Welt&publisher-content=welt-solar-artikel';
   var MOBILE_MQ = '(max-width: 640px)';
+
+  // This widget is injected inline on the host page, so it can read the page's
+  // own URL params directly (same origin) — gclid & co. pass through cleanly.
+  var _q; try { _q = new URL(location.href).searchParams; } catch(e) { _q = { get: function(){ return null; } }; }
+  var PASS_KEYS = ['gclid','msclkid','matchtype','utm_source','utm_campaign','keyword','placement','device'];
+  var pass = PASS_KEYS.reduce(function(a,k){ var v=_q.get(k); if(v) a.push(encodeURIComponent(k)+'='+encodeURIComponent(v)); return a; },[]).join('&');
 
   function isMobile() {
     return window.matchMedia(MOBILE_MQ).matches;
@@ -23,7 +29,7 @@
 
   function buildUrl(abbr) {
     var base = isMobile() ? FUNNEL_MOBILE_BASE : FUNNEL_DESKTOP_BASE;
-    return base + '?' + UTM + '&utm_content=' + abbr + FUNNEL_HASH;
+    return base + '?' + PARAMS + '&utm_content=' + abbr + (pass ? '&' + pass : '') + FUNNEL_HASH;
   }
 
   var STATES = [
