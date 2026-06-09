@@ -45,13 +45,16 @@ Account 2 funnels are used here because there is no account 1 equivalent with th
 ### Hard-coded on every tile click
 | Parameter | Heat pump | Solar |
 |-----------|-----------|-------|
+| `utm_source` | `welt.de` | `welt.de` |
+| `utm_medium` | `advertorial` | `advertorial` |
+| `utm_campaign` | `wp_june26` | `solar_june26` |
 | `bcid` | `3jf95jdleq` | `usjr74ngzs` |
 | `publisher` | `Welt` | `Welt` |
-| `publisher-content` | `welt-waermepumpe-artikel` | `welt-solar-artikel` |
+| `publisher-content` | `welt-waermepumpe-article` | `welt-solar-article` |
 | `utm_content` | State code (e.g. `BY`) | State code (e.g. `BY`) |
 | `bundesland` | State code | — |
 
-`bcid` identifies the Google Ads account/campaign in Heyflow and routes to the correct configuration. `publisher` and `publisher-content` are stored in Zapier and used for Tableau reporting.
+`utm_source` / `utm_medium` / `utm_campaign` are required for Tableau reporting. `bcid` identifies the Google Ads account/campaign in Heyflow and routes to the correct configuration. `publisher` and `publisher-content` are stored in Zapier and used for Tableau reporting. The `utm_campaign` month tag (`june26`) is updated per campaign launch month.
 
 ### Google Ads tracking template
 ```
