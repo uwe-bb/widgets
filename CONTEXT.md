@@ -19,24 +19,24 @@ Two advertorial pages on Welt.de embed our Bundesland selector widgets. Users pi
 Each page has two ways for users to reach our funnel:
 
 ### 1. Article CTA links (outside the iframe, managed by Welt)
-These go to **Unbounce landing pages** (account 1), which handle mobile/desktop forking internally.
+A single desktop funnel URL per vertical on the branded `vergleich` domain (one link, no device fork). No dedicated landing pages are created — the links point straight at the funnel.
 
-| Page | Intended destination |
-|------|----------------------|
-| Wärmepumpe | `https://www.top10-waermepumpen-angebotsvergleich.de/desktop/main/` |
-| Photovoltaik | `https://www.top10-photovoltaikanlage-angebotsvergleich.de/main/desktop/` |
+| Page | Destination |
+|------|-------------|
+| Wärmepumpe | `https://vergleich.top10-waermepumpen-angebotsvergleich.de/waermepumpe-desktop-2` (+ `#building-type`) |
+| Photovoltaik | `https://vergleich.top10-photovoltaikanlage-angebotsvergleich.de/solar-desktop3` (+ `#immobilie`) |
 
-> ⚠️ **Status:** These Unbounce pages do not exist yet and need to be created. Welt currently links to the root URL with their own hardcoded UTMs. The link update cannot be requested from Welt until the Unbounce pages are live.
+These carry the same tracking params as the widget tiles. Welt currently links to the old root URL with stale UTMs — update requested via email.
 
 ### 2. Iframe tile clicks (inside the widget, managed by us)
-These go directly to **account 2 funnels** (top10-anbieter.de), which have their own mobile/desktop logic.
+These go to the same branded `vergleich` funnels, with desktop/mobile chosen by the widget.
 
 | Widget | Desktop funnel | Mobile funnel |
 |--------|---------------|---------------|
-| Heat pump | `top10-anbieter.de/waermepumpe-desktop-2` | `top10-anbieter.de/waermepumpe-mobile-2` |
-| Solar | `top10-anbieter.de/solar-desktop3` | `top10-anbieter.de/solar-mobile3` |
+| Heat pump | `vergleich.top10-waermepumpen-angebotsvergleich.de/waermepumpe-desktop-2` | `vergleich.top10-waermepumpen-angebotsvergleich.de/waermepumpe-mobile-2` |
+| Solar | `vergleich.top10-photovoltaikanlage-angebotsvergleich.de/solar-desktop3` | `vergleich.top10-photovoltaikanlage-angebotsvergleich.de/solar-mobile3` |
 
-Account 2 funnels are used here because there is no account 1 equivalent with the same mobile/desktop split capability at the tile level.
+The widget detects mobile vs. desktop and picks the matching funnel; heat pump appends `#building-type`, solar appends `#immobilie`.
 
 ---
 
@@ -140,13 +140,11 @@ https://www.top10-waermepumpen-angebotsvergleich.de/?matchtype=e&gclid=Cj0KCAjw_
 
 | Item | Owner | Blocked on |
 |------|-------|-----------|
-| Create new Unbounce landing pages (`/desktop/main/`) | Us | — |
-| Ask Welt to update article CTA links to new Unbounce URLs | Uwe → Welt/Julian | Unbounce pages must exist first |
-| Ask Welt to update article CTA links with `bcid` + `publisher` params | Uwe → Welt/Julian | Same as above |
+| Ask Welt to update article CTA links (vergleich domain + full tracking params) | Uwe → Welt/Julian | Email drafted |
 | iframe auto-resize listener | Welt IT | Awaiting response |
 | gclid passthrough for iframe tiles | Welt IT | Declined — no solution currently |
 | gclid passthrough for article CTA links | Welt IT | Declined — no solution currently |
-| Confirm `top10-anbieter.de` preserves query params through redirect to Heyflow | Internal test | — |
+| Confirm the `vergleich.top10-*-angebotsvergleich.de` funnels preserve query params through to Heyflow | Internal test | — |
 | Confirm Heyflow has `gclid` mapped as a hidden field | Heyflow setup check | — |
 
 ---
