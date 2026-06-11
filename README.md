@@ -93,7 +93,7 @@ so nothing arrives. See `CONTEXT.md` for the full story.
 
 ## Notes
 
-- `utm_campaign` carries a month tag (`june26`). Bump it per campaign launch month.
+- `utm_campaign` carries a month tag (`june26`). **Frozen** — Welt charges for post-go-live changes, so it stays `june26` until bundled with another change. Don't expect it to track the current month.
 - The `publisher` / `publisher-content` params come from the bcid system spec
   (Niklas, 29 Apr 2026) — stored in Zapier for Tableau evaluations.
 - Article CTA links (outside the iframe, managed by Welt editorial) must carry the
