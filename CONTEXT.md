@@ -5,7 +5,8 @@
 > - Article CTA links: ✅ Welt updated them (Julian Klosik, confirmed live on both pages, no charge this time).
 > - Mobile iframe resize fix: ⏳ Welt IT ticket created, pending implementation.
 > - gclid passthrough: ❌ Welt declined — running manual CPC, attribution via bcid (no offline conversion uploads).
-> - Campaigns: being finalized (max-CPC fix in progress); review call before launch.
+> - Campaigns: ✅ **launched 2026-06-10** (account `382-370-6884`, manual CPC) — first leads already flowing. Cost data in Tableau not yet correct (Alex / DWH pipeline on it).
+> - **Work paused here** — widgets are final and stable; no active development. This doc + the README are the handoff.
 
 ---
 
@@ -153,7 +154,7 @@ Plus change `min-height:1080px` → `height:600px` on the `<iframe>` tag.
 | Item | Owner | Status |
 |------|-------|--------|
 | Mobile iframe resize listener | Welt IT | Ticket created, pending |
-| Fix max-CPC issue on campaigns + launch | Uwe / Antoine | In progress; review call before launch |
+| Cost data correct in Tableau | Alex / DWH | In progress |
 | Confirm `vergleich.top10-*-angebotsvergleich.de` funnels preserve query params through to Heyflow | Internal test | Open |
 | Confirm Heyflow has `gclid` mapped as a hidden field | Internal | Open (moot unless passthrough ever revived) |
 | Verify Welt's live article links match the spec'd params | Uwe (optional) | Optional sanity check |

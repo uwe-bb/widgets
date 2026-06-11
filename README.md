@@ -6,6 +6,16 @@ state and is routed to the corresponding funnel with full tracking attached.
 
 Hosted via GitHub Pages at `https://uwe-bb.github.io/widgets/`.
 
+> **Status (2026-06-11):** Live. Google Ads campaigns launched 2026-06-10, leads flowing. Widget code is **final and not under active development**. For the full project history — Google Ads setup, tracking-parameter rationale, decisions, Welt contacts, and open items — see **[`CONTEXT.md`](CONTEXT.md)**. Read that first if you're picking this up cold.
+
+## Deployment
+
+Push to `main` → live automatically via GitHub Pages (no build step). The widget logic — including the funnel destinations on the tiles — is fully under our control in these HTML files; Welt simply embeds them via a raw `<iframe>`.
+
+**Two things live on Welt's pages and require Welt to change (not us):**
+1. The `<iframe>` embed itself — its `src` (`uwe-bb.github.io/widgets/…`) and sizing. ⚠️ If we ever rename files, move the repo, or change the GitHub account/Pages URL, Welt must re-point the `src` or the embeds break.
+2. The article CTA links in the body (the non-iframe links). These were updated by Welt editorial; note Welt charges for post-go-live changes.
+
 ## Files
 
 | File | Purpose |
