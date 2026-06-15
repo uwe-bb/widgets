@@ -40,13 +40,29 @@ html,body{background:#EAEAEB;color:#0A0908;font-family:Roboto,system-ui,-apple-s
   PASS.forEach(function(k){try{var v=q.get(k);if(v)passMap[k]=v;}catch(e){}});
   try{var rq=new URL(document.referrer).searchParams;PASS.forEach(function(k){if(!passMap[k]){var v=rq.get(k);if(v)passMap[k]=v;}});}catch(e){}
   var pass=Object.keys(passMap).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(passMap[k]);}).join('&');
+  // Device detection runs INSIDE the embed iframe, which on welt.de is
+  // cross-origin — so window.top.* is unreadable and must never be touched
+  // (the throw would skip the fallback and collapse detection to UA sniffing).
+  // The iframe is capped at max-width:1000px, so we can't use a plain
+  // "width < 1024 = mobile" test; we lean on touch/pointer signals plus a
+  // phone-width query and only return desktop when confident it is NOT touch.
   function isMobile(){
     try{
-      var w=(window.top&&window.top.innerWidth)||window.innerWidth||0;
-      if(w&&w<768)return true;
-      if(w&&w>=768)return !!(window.matchMedia&&window.matchMedia('(pointer: coarse)').matches&&w<1024);
+      var mm=window.matchMedia;
+      if(mm){
+        // Portrait phones. 767 is safe under the 1000px iframe cap — a desktop
+        // embed renders far wider, so a real desktop never matches this.
+        if(mm('(max-width: 767px)').matches)return true;
+        // Touch-first device on a not-huge viewport: phones in landscape, tablets.
+        if(mm('(pointer: coarse)').matches&&mm('(max-width: 1024px)').matches)return true;
+      }
     }catch(e){}
-    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent||'');
+    var ua=navigator.userAgent||'';
+    // UA fallback, incl. in-app webviews (e.g. the WELT app on a phone).
+    if(/Mobi|Android|iPhone|iPod|iPad|Windows Phone|BlackBerry|IEMobile|Opera Mini|FBAN|FBAV|Instagram|Line|WebView/i.test(ua))return true;
+    // iPadOS 13+ Safari reports as desktop "Macintosh" — detect via touch points.
+    if((navigator.maxTouchPoints||0)>1&&/MacIntel/.test(navigator.platform||''))return true;
+    return false;
   }
   var funnel=isMobile()?mobile:desktop;
   var states=[['BW','Baden-Württemberg'],['BY','Bayern'],['BE','Berlin'],['BB','Brandenburg'],['HB','Bremen'],['HH','Hamburg'],['HE','Hessen'],['MV','Mecklenburg-Vorpommern'],['NI','Niedersachsen'],['NW','Nordrhein-Westfalen'],['RP','Rheinland-Pfalz'],['SL','Saarland'],['ST','Sachsen-Anhalt'],['SN','Sachsen'],['SH','Schleswig-Holstein'],['TH','Thüringen']];
