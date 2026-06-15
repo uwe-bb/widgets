@@ -163,8 +163,29 @@
     { abbr: 'TH', name: 'Thüringen' }
   ];
 
+  // Device detection runs INSIDE the embed iframe, which on welt.de is
+  // cross-origin — so window.top.* is unreadable and must never be touched
+  // (the throw would skip the fallback and collapse detection to UA sniffing).
+  // The iframe is capped at max-width:1000px, so we can't use a plain
+  // "width < 1024 = mobile" test; we lean on touch/pointer signals plus a
+  // phone-width query and only return desktop when confident it is NOT touch.
   function isMobile() {
-    return window.matchMedia(MOBILE_MQ).matches;
+    try {
+      var mm = window.matchMedia;
+      if (mm) {
+        // Portrait phones. 767 is safe under the 1000px iframe cap — a desktop
+        // embed renders far wider, so a real desktop never matches this.
+        if (mm('(max-width: 767px)').matches) return true;
+        // Touch-first device on a not-huge viewport: phones in landscape, tablets.
+        if (mm('(pointer: coarse)').matches && mm('(max-width: 1024px)').matches) return true;
+      }
+    } catch (e) {}
+    var ua = navigator.userAgent || '';
+    // UA fallback, incl. in-app webviews (e.g. the WELT app on a phone).
+    if (/Mobi|Android|iPhone|iPod|iPad|Windows Phone|BlackBerry|IEMobile|Opera Mini|FBAN|FBAV|Instagram|Line|WebView/i.test(ua)) return true;
+    // iPadOS 13+ Safari reports as desktop "Macintosh" — detect via touch points.
+    if ((navigator.maxTouchPoints || 0) > 1 && /MacIntel/.test(navigator.platform || '')) return true;
+    return false;
   }
 
   function buildUrl(abbr) {
