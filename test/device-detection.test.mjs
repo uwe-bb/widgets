@@ -5,11 +5,15 @@
 // iframe. Run with:  node test/device-detection.test.mjs
 //
 // Background: the widgets are embedded in a cross-origin iframe on welt.de.
-// Reading window.top.innerWidth there throws a SecurityError; the old code let
-// that throw skip its width fallback, collapsing detection to UA sniffing and
-// routing mobile users (in-app webviews, iPadOS-as-Mac, UA-normalized browsers)
-// to the desktop funnel. The iframe is capped at max-width:1000px, so detection
-// must NOT treat the iframe's own width against a 1024 threshold as "mobile".
+// Two failure modes this guards against:
+//  1. Reading window.top.innerWidth throws a SecurityError in a cross-origin
+//     iframe; the old code let that throw skip its fallback and collapse to UA
+//     sniffing.
+//  2. The iframe's width is the ARTICLE COLUMN width (< 768px on welt.de), NOT
+//     the device width. A later "fix" keyed detection on (max-width: 767px),
+//     which then matched for every DESKTOP visitor (narrow column) and routed
+//     them to the mobile funnel. So detection must use NO width media queries
+//     at all — only device signals (pointer type, UA, touch points).
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -31,9 +35,15 @@ function extractIsMobile(file) {
     else if (src[i] === '}' && --depth === 0) { i++; break; }
   }
   const fnSrc = src.slice(start, i);
-  // Guard: the cross-origin bug was a literal window.top read. Never reintroduce.
+  // Guard 1: the cross-origin bug was a literal window.top read. Never reintroduce.
   if (/window\s*\.\s*top/.test(fnSrc)) {
     throw new Error(`${file}: isMobile() reads window.top — throws in a cross-origin iframe`);
+  }
+  // Guard 2: width media queries measure the iframe's column width, not the
+  // device — that is what routed desktop visitors to the mobile funnel. Never
+  // reintroduce (max-width/min-width) into device detection.
+  if (/\b(?:max|min)-width\s*:/.test(fnSrc)) {
+    throw new Error(`${file}: isMobile() uses a width media query — measures the iframe column, not the device`);
   }
   return fnSrc;
 }
@@ -75,11 +85,12 @@ const CASES = [
     expect: false,
   },
   {
-    name: '(c) desktop on the 1000px-capped iframe -> desktop (NOT mobile)',
+    name: '(c) DESKTOP in welt.de narrow iframe column (<768px) -> desktop (NOT mobile)',
     env: {
-      // viewport ~1000px: phone query false; pointer fine; 1024 query matches
-      // but is gated behind coarse-pointer, so it must NOT flip to mobile.
-      queries: { '(max-width: 767px)': false, '(pointer: coarse)': false, '(max-width: 1024px)': true },
+      // The regression that shipped: the iframe renders in a ~600px article
+      // column, so EVERY width query matches even though this is a desktop
+      // (fine pointer, no touch). Width-based detection wrongly returned mobile.
+      queries: { '(max-width: 767px)': true, '(pointer: coarse)': false, '(max-width: 1024px)': true },
       navigator: { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', maxTouchPoints: 0, platform: 'MacIntel' },
     },
     expect: false,
