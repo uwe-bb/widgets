@@ -1,12 +1,13 @@
 # Welt Advertorials — Widget & Campaign Context
 
-> **Status as of 2026-06-11**
-> - Widget code: ✅ done & merged to `main`, live on `uwe-bb.github.io/widgets/`. Both widgets on the branded `vergleich` funnel domains with full tracking (bcid, UTMs, publisher params), correct hashes, and mobile height broadcast.
-> - Article CTA links: ✅ Welt updated them (Julian Klosik, confirmed live on both pages, no charge this time).
-> - Mobile iframe resize fix: ⏳ Welt IT ticket created, pending implementation.
-> - gclid passthrough: ❌ Welt declined — running manual CPC, attribution via bcid (no offline conversion uploads).
-> - Campaigns: ✅ **launched 2026-06-10** (account `382-370-6884`, manual CPC) — first leads already flowing. Cost data in Tableau not yet correct (Alex / DWH pipeline on it).
-> - **Work paused here** — widgets are final and stable; no active development. This doc + the README are the handoff.
+> **Status as of 2026-07-22**
+> - Widget code: ✅ done & merged to `main`, live on `uwe-bb.github.io/widgets/`. Both widgets on the branded `vergleich` funnel domains with full tracking, correct hashes, mobile height broadcast, and fixed device detection (commit `25410eb`).
+> - Article CTA links: ✅ live on both pages.
+> - Mobile iframe resize fix: ✅ implemented by Welt IT (`wp_widget_resize` listener live on both pages).
+> - Param passthrough (gclid/wbraid/gbraid + UTMs): ✅ **LIVE** — Welt deployed a forwarding script on both articles (article links ~2026-06-11, widget iframes 2026-07-02). Verified end-to-end 2026-07-03, re-verified 2026-07-22.
+> - Offline conversion uploads: ✅ configured on account `382-370-6884` (4 Import-click actions, created 2026-07-08/09); imports flowing since 2026-07-21. Bidding switched from manual CPC to **Maximize conversions** (custom goal `Partner submit / with value`).
+> - Campaigns: ✅ **live again** — re-enabled 2026-07-14/21 after a paused diagnosis phase; HP budget €500/day.
+> - Widgets are stable; no active development. This doc + the README are the handoff.
 
 ---
 
@@ -30,11 +31,13 @@ Welt embeds these HTML files directly via a raw `<iframe>` tag.
 ## Google Ads setup
 
 - **Account:** `Lead gen - Welt DE DACH (382-370-6884)` — one account, two campaigns:
-  - Heat Pump (owner: Uwe) — Google Ads campaign name `Heat Pump DACH - Welt | Search`
-  - Solar (owner: Antoine) — `Solar DACH - Welt | Search`
-- **Bid strategy:** manual CPC (tCPA null by design).
-- **Attribution:** via the **bcid** system (see below), NOT gclid — Welt won't pass the gclid through, so no offline conversion uploads on this account. Google-side conversion KPIs (Partner Submit, ROAS, CPA) won't populate.
-- **Funnels reused:** Heat Pump 2 / Solar 2 Heyflow funnels, with a bcid override giving each its own campaign in Tableau.
+  - Heat Pump (owner: Uwe) — Google Ads campaign name `Heat Pump DACH 3 - Welt | Search`
+  - Solar (owner: Antoine) — `Solar DACH 3 - Welt | Search`
+  - (Named after the exact Zapier campaign so the DWH joins without hardcoding — Alex's convention.)
+- **Bid strategy:** Maximize conversions with custom goal `Partner submit / with value` (switched from manual CPC 2026-07-14/16 once conversion imports became possible).
+- **Attribution:** Tableau revenue via the **bcid** system (see below) + Google-side conversions via **gclid offline conversion imports** since 2026-07-21. Four Import-click conversion actions exist on the account (created 2026-07-08/09): `Lead / unqualified`, `Lead / qualified`, `Partner submit / without value`, `Partner submit / with value` (only the last one is the primary/bidding goal).
+  - ⚠️ Leads with `Type = Erdwärmepumpe` are **excluded from Google conversion tracking by business rule** — expect campaign conversion counts to sit below Tableau lead counts.
+- **Funnels reused:** Heat Pump 2 / Solar 2 Heyflow funnels, with a bcid override giving each its own campaign in Tableau. The funnels capture `gclid`/`wbraid`/`gbraid` as hidden fields.
 - **Tracking template (Google Ads side):**
   ```
   {lpurl}?matchtype={matchtype}&gclid={gclid}&utm_source=GoogleAds&utm_campaign={campaignid}&keyword={keyword}&placement={placement}&device={device}
@@ -96,8 +99,10 @@ The widget detects mobile vs. desktop; heat pump appends `#building-type`, solar
 ### Month tag — FROZEN
 `utm_campaign` carries a month (`june26`). **It is intentionally frozen** — Welt charges for changes after an advertorial goes live (waived this once as goodwill). So `hp_june26` / `solar_june26` will stay as-is until we make other changes we can bundle it with. Do **not** expect it to track the current month.
 
-### Ad-click passthrough (built, but dormant)
-Both widgets try to forward `gclid`, `msclkid`, `matchtype`, `keyword`, `placement`, `device` from the widget's own src URL (and `document.referrer` as a fallback) to the tile links. `utm_source` / `utm_campaign` are deliberately NOT passed through — they stay hardcoded to `welt.de` / the month tag so traffic always attributes to Welt. **Dormant** because Welt's referrer policy strips params and Welt IT declined the forwarding script (see below).
+### Ad-click passthrough — LIVE
+Both widgets forward `gclid`, `wbraid`, `gbraid`, `msclkid`, `matchtype`, `keyword`, `placement`, `device` from the widget's own src URL (and `document.referrer` as a fallback) to the tile links (`wbraid`/`gbraid` added in commit `25410eb`). `utm_source` / `utm_campaign` are deliberately NOT passed through — they stay hardcoded to `welt.de` / the month tag so traffic always attributes to Welt.
+
+This works because Welt deployed a forwarding script on both articles (see next section): the article URL's params land on the iframe `src`, the widget picks them up and appends them to every tile link. Note that with parallel tracking, only auto-tagging params (`gclid`/`wbraid`/`gbraid`) actually arrive on the article URL from real ad clicks — the tracking-template params (`matchtype`, `keyword`, …) never reach the landing page and therefore never reach the funnel.
 
 ---
 
@@ -125,17 +130,21 @@ Both widgets try to forward `gclid`, `msclkid`, `matchtype`, `keyword`, `placeme
 ```
 Plus change `min-height:1080px` → `height:600px` on the `<iframe>` tag.
 
-> ⏳ **Status:** Welt IT ticket created (2026-06). Pending implementation.
+> ✅ **Status:** implemented by Welt IT — listener live on both pages, iframe on `min-height:600px`.
 
 ---
 
-## gclid Passthrough — declined (background)
+## gclid Passthrough — LIVE (history)
 
 **Goal:** carry the `gclid` from the Welt article URL → funnel → Heyflow for conversion attribution.
 
-**Blocker:** the iframe is cross-origin (`uwe-bb.github.io` vs `unternehmen.welt.de`), so it can't read the parent URL. `document.referrer` was tested and confirmed not to carry query params (Welt's `strict-origin-when-cross-origin` policy strips them).
+**Original blocker:** the iframe is cross-origin (`uwe-bb.github.io` vs `unternehmen.welt.de`), so it can't read the parent URL, and `document.referrer` doesn't carry query params (Welt's `strict-origin-when-cross-origin` policy). Welt IT initially **declined** a forwarding script — which is why the account launched on manual CPC with bcid-only attribution.
 
-**Asked Welt IT** for a small script forwarding the article's URL params into the iframe `src`. ❌ **Declined.** Consequence: no gclid-based offline conversion uploads — attribution relies on the bcid system + manual CPC instead.
+**Welt then reversed course** and deployed a forwarding script on both articles, in two rounds:
+1. **~2026-06-11 (v1):** rewrote article `<a>` links only, using `searchParams.set()` — gclid reached the funnel via CTA links, but not via the widget, and the hardcoded `utm_source=welt.de` got overwritten by incoming params.
+2. **2026-07-02 (v2, current):** targets `main.adcs-main a, main.adcs-main iframe`, forwards `utm_source, utm_medium, utm_campaign, utm_term, utm_content, gclid, wbraid, gbraid`, and uses `append()` with a `has()` guard so existing (hardcoded) params are never overwritten.
+
+Verified end-to-end 2026-07-03 (both pages, browser click-test + code review), re-verified 2026-07-22. This is what unlocked offline conversion uploads and the switch away from manual CPC.
 
 ---
 
@@ -146,6 +155,7 @@ Plus change `min-height:1080px` → `height:600px` on the `<iframe>` tag.
 - **GitHub org move:** considered moving the repo off Uwe's personal account to the org. **Decided against** for now (it's a test; would need a coordinated Pages-URL cutover + Welt re-embedding the iframe). Custom-domain route also rejected as overkill.
 - **Labels anglicized:** `publisher-content` uses English (`welt-heat-pump-article`), `utm_campaign` uses `hp_`/`solar_`.
 - **Dead code removed:** `bundesland-widget-snippet.js` (inline solar) and `bundesland-widget-snippet-heat-pump.js` (loader) — both unused; Welt embeds the iframe HTML directly.
+- **Device detection rewritten (2026-07-02, commit `25410eb`):** a previous fix keyed `isMobile()` on `(max-width: 767px)`, but inside Welt's iframe that measures the **article column** (< 768px even on desktop) — every desktop visitor got the mobile funnel. Now detects via `pointer: coarse` + UA + `maxTouchPoints` only; `test/device-detection.test.mjs` rejects any width media query in `isMobile()`.
 
 ---
 
@@ -153,11 +163,12 @@ Plus change `min-height:1080px` → `height:600px` on the `<iframe>` tag.
 
 | Item | Owner | Status |
 |------|-------|--------|
-| Mobile iframe resize listener | Welt IT | Ticket created, pending |
-| Cost data correct in Tableau | Alex / DWH | In progress |
-| Confirm `vergleich.top10-*-angebotsvergleich.de` funnels preserve query params through to Heyflow | Internal test | Open |
-| Confirm Heyflow has `gclid` mapped as a hidden field | Internal | Open (moot unless passthrough ever revived) |
-| Verify Welt's live article links match the spec'd params | Uwe (optional) | Optional sanity check |
+| Mobile iframe resize listener | Welt IT | ✅ Implemented |
+| Cost data correct in Tableau | Alex / DWH | ✅ Resolved (2026-06, after campaign rename) |
+| Funnels preserve query params through to Heyflow | Internal test | ✅ Confirmed (gclid/wbraid/gbraid captured; verified on 10k responses) |
+| Heyflow hidden fields for `gclid`/`wbraid`/`gbraid` | Internal | ✅ Confirmed present in HP2/Solar2 funnels |
+| Conversion uploads working end-to-end (no double-count / misattribution) | Christopher (Ops) | ⏳ Verification asked 2026-07-22 (Diagnostics doesn't cover the two newer actions; count delta 29 vs 24 on 07-21) |
+| HP DACH 4 Lovable LP dropping URL params (separate account, not Welt) | Julian | ⏳ Open |
 
 ---
 
@@ -171,4 +182,4 @@ Plus change `min-height:1080px` → `height:600px` on the `<iframe>` tag.
 - **Julian Weber** — set up the funnel links / widget structure; asked for the account status update.
 - **Antoine** — owns the Solar campaign; co-decided the funnel-domain / link architecture.
 - **Niklas** — defined the tracking-parameter / bcid system (`bcid`, `publisher`, `publisher-content`).
-- **Camila** — Campaigns table / bcid entries. **Alex** — DWH pipeline + campaign naming convention.
+- **Christopher + Luka** — own conversion tracking / uploads since Camila's handover (2026-07-17). **Camila** — previously Campaigns table / bcid entries / conversion actions. **Alex** — DWH pipeline + campaign naming convention.

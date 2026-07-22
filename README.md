@@ -6,7 +6,7 @@ state and is routed to the corresponding funnel with full tracking attached.
 
 Hosted via GitHub Pages at `https://uwe-bb.github.io/widgets/`.
 
-> **Status (2026-06-11):** Live. Google Ads campaigns launched 2026-06-10, leads flowing. Widget code is **final and not under active development**. For the full project history — Google Ads setup, tracking-parameter rationale, decisions, Welt contacts, and open items — see **[`CONTEXT.md`](CONTEXT.md)**. Read that first if you're picking this up cold.
+> **Status (2026-07-22):** Live. Campaigns running (re-enabled 2026-07-14/21), param passthrough from the Welt articles is **live** (gclid/wbraid/gbraid reach the funnels), and offline conversion uploads are flowing into account `382-370-6884` since 2026-07-21. Widget code is **final and not under active development**. For the full project history — Google Ads setup, tracking-parameter rationale, decisions, Welt contacts, and open items — see **[`CONTEXT.md`](CONTEXT.md)**. Read that first if you're picking this up cold.
 
 ## Deployment
 
@@ -101,15 +101,18 @@ correct campaign in Tableau. Values verified against the
 > ⚠️ If the browser strips the `bcid`, that lead falls back to the funnel's
 > default campaign. Keep it on every outgoing link.
 
-### Ad-click passthrough (dormant)
+### Ad-click passthrough (LIVE)
 
-Both widgets also try to forward `gclid`, `msclkid`, `matchtype`, `keyword`,
-`placement`, and `device` from the page URL / referrer to the tile links, for
-Google/Microsoft Ads attribution. `utm_source` / `utm_campaign` are deliberately
-**not** forwarded — they stay hardcoded to `welt.de` / `hp_june26` so advertorial
-traffic always attributes to Welt. The passthrough is currently **dormant**: Welt's
-referrer policy strips the params and Welt IT declined to add a forwarding script,
-so nothing arrives. See `CONTEXT.md` for the full story.
+Both widgets forward `gclid`, `wbraid`, `gbraid`, `msclkid`, `matchtype`,
+`keyword`, `placement`, and `device` from the page URL / referrer to the tile
+links, for Google/Microsoft Ads attribution. `utm_source` / `utm_campaign` are
+deliberately **not** forwarded — they stay hardcoded to `welt.de` / `hp_june26`
+so advertorial traffic always attributes to Welt. The passthrough is **live**
+since 2026-07-02: Welt's pages run a forwarding script that appends the article
+URL's params (`utm_*`, `gclid`, `wbraid`, `gbraid`) to the widget iframe `src`,
+where the widget picks them up. Verified end-to-end 2026-07-03, re-verified
+2026-07-22. This feeds the offline conversion uploads on the Google Ads account.
+See `CONTEXT.md` for the full story.
 
 ## Notes
 
