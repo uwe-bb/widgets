@@ -167,8 +167,10 @@ Verified end-to-end 2026-07-03 (both pages, browser click-test + code review), r
 | Cost data correct in Tableau | Alex / DWH | ✅ Resolved (2026-06, after campaign rename) |
 | Funnels preserve query params through to Heyflow | Internal test | ✅ Confirmed (gclid/wbraid/gbraid captured; verified on 10k responses) |
 | Heyflow hidden fields for `gclid`/`wbraid`/`gbraid` | Internal | ✅ Confirmed present in HP2/Solar2 funnels |
-| Conversion uploads working end-to-end (no double-count / misattribution) | Christopher (Ops) | ⏳ Verification asked 2026-07-22 (Diagnostics doesn't cover the two newer actions; count delta 29 vs 24 on 07-21) |
+| Conversion uploads working end-to-end (no double-count / misattribution) | Christopher (Ops) | ✅ Verified 2026-07-22/23: Ads value matched Lead-submitted table to the cent (€1,265.95, click-day 07-21); Heyflow→Zapier 1:1 for both campaigns (HP 18↔18, Solar 11↔11). Known Ads-vs-export gaps by design: no-click-ID leads + `Ads Optimization=false` leads (business-value criteria, not consent). Ads Diagnostics view lags/omits the two newer actions — cosmetic. |
 | HP DACH 4 Lovable LP dropping URL params (separate account, not Welt) | Julian | ⏳ Open |
+| iOS tap-does-nothing on article CTA links: Welt's `bottom.js` intercepts clicks on `.adcs-main a` (`preventDefault` + `window.open`); when iOS popup heuristics block `window.open`, nothing happens (long-press bypasses page JS and works). Fix requested: remove interception or fall back to `location.href` when `window.open` returns null. Widget tiles unaffected (inside iframe). | Welt IT (ticket via Klosik) | ⏳ Ticket created 2026-07-23; `bottom.js` unchanged as of same day — re-verify when IT reports back |
+| Article CTA links switched to mobile funnel URLs (`waermepumpe-mobile-2` / `solar-mobile3`), with `utm_content=intro/mid/outro` per position; params/bcids unchanged. | Klosik | ✅ Live + verified 2026-07-23 (6 links per page, widget untouched) |
 
 ---
 
