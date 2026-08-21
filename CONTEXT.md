@@ -8,6 +8,11 @@
 > - Offline conversion uploads: ✅ configured on account `382-370-6884` (4 Import-click actions, created 2026-07-08/09); imports flowing since 2026-07-21. Bidding switched from manual CPC to **Maximize conversions** (custom goal `Partner submit / with value`).
 > - Campaigns: ✅ **live again** — re-enabled 2026-07-14/21 after a paused diagnosis phase; HP budget €500/day.
 > - Widgets are stable; no active development. This doc + the README are the handoff.
+>
+> **Update 2026-08-21:** a **third vertical** — Stairlift / Treppenlift — was added
+> (`bundesland-widget-stairlift.html`, built by Antoine, PR #1). New Welt advertorial,
+> campaign `Stairlift DACH 3` (bcid `m6ujzemskr`, same Welt Ads account `382-370-6884`).
+> Article not live yet at time of writing.
 
 ---
 
@@ -22,6 +27,7 @@ Two advertorial pages on Welt.de embed our Bundesland (German-state) selector wi
 **Widget files (self-hosted, GitHub Pages at `uwe-bb.github.io/widgets/`):**
 - `bundesland-widget-heat-pump.html` — heat pump tile selector
 - `bundesland-widget-iframe.html` — solar/PV tile selector
+- `bundesland-widget-stairlift.html` — stairlift/Treppenlift tile selector (added 2026-08-21)
 - `README.md` — practical reference (files, funnel destinations, full parameter breakdown)
 
 Welt embeds these HTML files directly via a raw `<iframe>` tag.
@@ -67,24 +73,33 @@ Same branded `vergleich` funnels, with desktop/mobile chosen by the widget.
 |--------|---------------|---------------|
 | Heat pump | `vergleich.top10-waermepumpen-angebotsvergleich.de/waermepumpe-desktop-2` | `vergleich.top10-waermepumpen-angebotsvergleich.de/waermepumpe-mobile-2` |
 | Solar | `vergleich.top10-photovoltaikanlage-angebotsvergleich.de/solar-desktop3` | `vergleich.top10-photovoltaikanlage-angebotsvergleich.de/solar-mobile3` |
+| Stairlift | `www.top10-anbieter.de/treppenlift-2` | same URL (no mobile funnel yet) |
 
-The widget detects mobile vs. desktop; heat pump appends `#building-type`, solar `#immobilie` (these are the first-screen names in Heyflow).
+The widget detects mobile vs. desktop; heat pump appends `#building-type`, solar `#immobilie`, stairlift `#lift-type` (these are the first-screen names in Heyflow).
+
+⚠️ **Stairlift runs on the generic `top10-anbieter.de` domain**, not a branded
+`vergleich.*` one like the other two — no branded Treppenlift funnel exists yet.
+If one is created, switching the widget is trivial, but the *article* CTA links
+would need a (chargeable) Welt change, so decide before the advertorial goes live.
 
 ---
 
 ## Tracking Parameters
 
 ### On every tile / article link
-| Parameter | Heat pump | Solar |
-|-----------|-----------|-------|
-| `utm_source` | `welt.de` | `welt.de` |
-| `utm_medium` | `advertorial` | `advertorial` |
-| `utm_campaign` | `hp_june26` | `solar_june26` |
-| `bcid` | `3jf95jdleq` | `usjr74ngzs` |
-| `publisher` | `Welt` | `Welt` |
-| `publisher-content` | `welt-heat-pump-article` | `welt-solar-article` |
-| `utm_content` | State code (e.g. `BY`) | State code (e.g. `BY`) |
-| `bundesland` | State code | — (solar uses `#immobilie` instead) |
+| Parameter | Heat pump | Solar | Stairlift |
+|-----------|-----------|-------|-----------|
+| `utm_source` | `welt.de` | `welt.de` | `welt.de` |
+| `utm_medium` | `advertorial` | `advertorial` | `advertorial` |
+| `utm_campaign` | `hp_june26` | `solar_june26` | `tl_aug26` |
+| `bcid` | `3jf95jdleq` | `usjr74ngzs` | `m6ujzemskr` |
+| `publisher` | `Welt` | `Welt` | `Welt` |
+| `publisher-content` | `welt-heat-pump-article` | `welt-solar-article` | `welt-treppenlift-article` |
+| `utm_content` | State code (e.g. `BY`) | State code (e.g. `BY`) | `bundesland_<code>` (e.g. `bundesland_by`) |
+| `bundesland` | State code | — (solar uses `#immobilie` instead) | — (stairlift uses `#lift-type` instead) |
+
+⚠️ Stairlift's `utm_content` uses the lowercase `bundesland_xx` form from its campaign
+spec, unlike the bare uppercase state code on the other two — two shapes in Tableau.
 
 - `utm_source` / `utm_medium` / `utm_campaign` — required for Tableau reporting.
 - `bcid` — overrides the Heyflow funnel's default campaign so leads/revenue attribute to the right campaign in Tableau. **If the browser strips it, the lead falls back to the funnel default.**
@@ -95,6 +110,7 @@ The widget detects mobile vs. desktop; heat pump appends `#building-type`, solar
 |------|------|
 | Heat Pump DACH 3 | `3jf95jdleq` |
 | Solar DACH 3 | `usjr74ngzs` |
+| Stairlift DACH 3 | `m6ujzemskr` (verified 2026-08-21 — same Welt GA account `3823706884`, same four account-level conversion actions as HP3/Solar3) |
 
 ### Month tag — FROZEN
 `utm_campaign` carries a month (`june26`). **It is intentionally frozen** — Welt charges for changes after an advertorial goes live (waived this once as goodwill). So `hp_june26` / `solar_june26` will stay as-is until we make other changes we can bundle it with. Do **not** expect it to track the current month.
@@ -155,6 +171,7 @@ Verified end-to-end 2026-07-03 (both pages, browser click-test + code review), r
 - **GitHub org move:** considered moving the repo off Uwe's personal account to the org. **Decided against** for now (it's a test; would need a coordinated Pages-URL cutover + Welt re-embedding the iframe). Custom-domain route also rejected as overkill.
 - **Labels anglicized:** `publisher-content` uses English (`welt-heat-pump-article`), `utm_campaign` uses `hp_`/`solar_`.
 - **Dead code removed:** `bundesland-widget-snippet.js` (inline solar) and `bundesland-widget-snippet-heat-pump.js` (loader) — both unused; Welt embeds the iframe HTML directly.
+- **Third vertical added (2026-08-21):** stairlift/Treppenlift widget, same iframe pattern, copied from the solar widget. Desktop and mobile intentionally point at the same funnel (only one exists); `test/device-detection.test.mjs` covers all three widgets.
 - **Device detection rewritten (2026-07-02, commit `25410eb`):** a previous fix keyed `isMobile()` on `(max-width: 767px)`, but inside Welt's iframe that measures the **article column** (< 768px even on desktop) — every desktop visitor got the mobile funnel. Now detects via `pointer: coarse` + UA + `maxTouchPoints` only; `test/device-detection.test.mjs` rejects any width media query in `isMobile()`.
 
 ---

@@ -1,8 +1,9 @@
 # Welt Bundesland Widgets
 
 Self-hosted German-state ("Bundesland") selector widgets embedded in the Welt.de
-advertorials for **Heat Pump** and **Solar / Photovoltaik**. A user picks their
-state and is routed to the corresponding funnel with full tracking attached.
+advertorials for **Heat Pump**, **Solar / Photovoltaik**, and **Stairlift / Treppenlift**.
+A user picks their state and is routed to the corresponding funnel with full
+tracking attached.
 
 Hosted via GitHub Pages at `https://uwe-bb.github.io/widgets/`.
 
@@ -32,6 +33,7 @@ The test also fails if `window.top` is ever read inside `isMobile()` again — t
 |------|---------|
 | `bundesland-widget-heat-pump.html` | Heat pump tile selector (iframe) |
 | `bundesland-widget-iframe.html` | Solar / PV tile selector (iframe) |
+| `bundesland-widget-stairlift.html` | Stairlift / Treppenlift tile selector (iframe) |
 | `CONTEXT.md` | Full project background, architecture, and open items |
 
 The Welt advertorials embed these HTML files directly via a raw `<iframe>` tag.
@@ -42,8 +44,12 @@ The Welt advertorials embed these HTML files directly via a raw `<iframe>` tag.
 |--------|---------|--------|
 | Heat pump | `vergleich.top10-waermepumpen-angebotsvergleich.de/waermepumpe-desktop-2` | `vergleich.top10-waermepumpen-angebotsvergleich.de/waermepumpe-mobile-2` |
 | Solar | `vergleich.top10-photovoltaikanlage-angebotsvergleich.de/solar-desktop3` | `vergleich.top10-photovoltaikanlage-angebotsvergleich.de/solar-mobile3` |
+| Stairlift | `www.top10-anbieter.de/treppenlift-2` | `www.top10-anbieter.de/treppenlift-2` (same — no dedicated mobile funnel yet) |
 
 The widget auto-detects mobile vs. desktop and picks the matching funnel.
+Stairlift is the exception: only one funnel exists so far, so both device classes
+resolve to the same URL. `FUNNEL_MOBILE_BASE` in the file is the single place to
+change if a mobile funnel is added later.
 
 ## Parameter breakdown
 
@@ -86,6 +92,28 @@ https://vergleich.top10-waermepumpen-angebotsvergleich.de/waermepumpe-desktop-2?
 https://vergleich.top10-photovoltaikanlage-angebotsvergleich.de/solar-desktop3?utm_source=welt.de&utm_medium=advertorial&utm_campaign=solar_june26&bcid=usjr74ngzs&publisher=Welt&publisher-content=welt-solar-article&utm_content=BY#immobilie
 ```
 
+### Stairlift / Treppenlift
+
+| Parameter | Value | Purpose |
+|-----------|-------|---------|
+| `utm_source` | `welt.de` | Traffic source (Tableau) |
+| `utm_medium` | `advertorial` | Medium (Tableau) |
+| `utm_campaign` | `tl_aug26` | Campaign + launch month (Tableau) |
+| `bcid` | `m6ujzemskr` | Overrides Heyflow default campaign → **Stairlift DACH 3** |
+| `publisher` | `Welt` | Stored in Zapier |
+| `publisher-content` | `welt-treppenlift-article` | Free-form label (Zapier → Tableau) |
+| `utm_content` | `bundesland_<code>` (e.g. `bundesland_by`) | Which tile was clicked |
+| `#lift-type` | (hash) | Pre-selects lift type in Heyflow |
+
+> ⚠️ `utm_content` on this widget uses the lowercase `bundesland_xx` form (per the
+> campaign spec), **not** the bare uppercase state code used by heat pump and solar.
+> Expect two different shapes in Tableau.
+
+**Resulting link (example for Bayern):**
+```
+https://www.top10-anbieter.de/treppenlift-2?utm_source=welt.de&utm_medium=advertorial&utm_campaign=tl_aug26&bcid=m6ujzemskr&publisher=Welt&publisher-content=welt-treppenlift-article&utm_content=bundesland_by#lift-type
+```
+
 ### bcid reference
 
 bcid overrides the Heyflow funnel's default campaign so leads/revenue land on the
@@ -97,6 +125,7 @@ correct campaign in Tableau. Values verified against the
 |----------|------|
 | Heat Pump DACH 3 | `3jf95jdleq` |
 | Solar DACH 3 | `usjr74ngzs` |
+| Stairlift DACH 3 | `m6ujzemskr` (verified 2026-08-21) |
 
 > ⚠️ If the browser strips the `bcid`, that lead falls back to the funnel's
 > default campaign. Keep it on every outgoing link.
@@ -116,7 +145,7 @@ See `CONTEXT.md` for the full story.
 
 ## Notes
 
-- `utm_campaign` carries a month tag (`june26`). **Frozen** — Welt charges for post-go-live changes, so it stays `june26` until bundled with another change. Don't expect it to track the current month.
+- `utm_campaign` carries a month tag (`june26` for HP/solar, `aug26` for stairlift). **Frozen once live** — Welt charges for post-go-live changes, so each stays at its launch month until bundled with another change. Don't expect it to track the current month.
 - The `publisher` / `publisher-content` params come from the bcid system spec
   (Niklas, 29 Apr 2026) — stored in Zapier for Tableau evaluations.
 - Article CTA links (outside the iframe, managed by Welt editorial) must carry the

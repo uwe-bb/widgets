@@ -63,10 +63,10 @@ function runIsMobile(fnSrc, { queries = {}, navigator = {} }) {
   return vm.runInNewContext(`${fnSrc}\nisMobile();`, sandbox);
 }
 
-const FILES = ['bundesland-widget-heat-pump.html', 'bundesland-widget-iframe.html'];
+const FILES = ['bundesland-widget-heat-pump.html', 'bundesland-widget-iframe.html', 'bundesland-widget-stairlift.html'];
 
 // Each case: a label, the matchMedia query results, the navigator mock, and the
-// expected isMobile() return. Applied identically to BOTH widgets.
+// expected isMobile() return. Applied identically to EVERY widget in FILES.
 const CASES = [
   {
     name: '(a) cross-origin + matchMedia reports a phone -> mobile',
