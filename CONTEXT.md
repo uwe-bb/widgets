@@ -15,8 +15,11 @@
 > `382-370-6884`). Widget is live on Pages and verified: served file matches `main`,
 > all 16 tiles build correctly, `gclid`/`wbraid` forward through, `utm_source` stays
 > pinned to `welt.de`. Remaining dependency is Welt's forwarding script on the new
-> article (see open items). Repo access: Antoine is now a collaborator (write) and
-> `main` is protected (PR + 1 approval; repo owner exempt).
+> article — **now also live and verified end-to-end (2026-09-03)**, see open items.
+> Repo access: Antoine is now a collaborator (write) and `main` is protected
+> (PR + 1 approval; repo owner exempt).
+>
+> **The stairlift vertical is fully live: article, widget, tracking chain.**
 
 ---
 
@@ -193,7 +196,7 @@ Verified end-to-end 2026-07-03 (both pages, browser click-test + code review), r
 | HP DACH 4 Lovable LP dropping URL params (separate account, not Welt) | Julian | ⏳ Open |
 | iOS tap-does-nothing on article CTA links: Welt's `bottom.js` intercepts clicks on `.adcs-main a` (`preventDefault` + `window.open`); when iOS popup heuristics block `window.open`, nothing happens (long-press bypasses page JS and works). Fix requested: remove interception or fall back to `location.href` when `window.open` returns null. Widget tiles unaffected (inside iframe). | Welt IT (ticket via Klosik) | ⏳ Ticket created 2026-07-23; `bottom.js` unchanged as of same day — re-verify when IT reports back |
 | Article CTA links switched to mobile funnel URLs (`waermepumpe-mobile-2` / `solar-mobile3`), with `utm_content=intro/mid/outro` per position; params/bcids unchanged. | Klosik | ✅ Live + verified 2026-07-23 (6 links per page, widget untouched) |
-| **Param forwarding script on the new Treppenlift article.** The script is deployed **per page** — the Wärmepumpe/Photovoltaik pages got it separately in June/July. Without it on the Treppenlift page, no `gclid` reaches the funnel and Google-side conversion attribution won't work for Stairlift DACH 3 (bcid attribution in Tableau is unaffected). | Antoine → Welt | ⏳ Requested by email 2026-08-21 (widget link + script request); end-to-end test on the live article once Welt confirms |
+| **Param forwarding script on the new Treppenlift article** (deployed per page — the Wärmepumpe/Photovoltaik pages got it separately in June/July). | Antoine → Welt | ✅ **Live + verified end-to-end 2026-09-03** on https://unternehmen.welt.de/haus-garten/treppenlift.html. Script is character-identical to the Wärmepumpe version; widget iframe sits inside `main.adcs-main` so the selector reaches it. Browser test with `?gclid=…&wbraid=…`: params land on the iframe `src` **and** on all 4 article CTA links, and the widget forwards them to all 16 tile links with `bcid=m6ujzemskr` intact, `utm_source` still `welt.de`, `#lift-type` last. `wp_widget_resize` listener also present. |
 | Stairlift `utm_content` uses the lowercase `bundesland_xx` form vs. the bare `BY` on HP/solar. Harmless today; only matters if a Tableau view assumes one shape across all three widgets. | — | ℹ️ Known, accepted |
 
 ---
