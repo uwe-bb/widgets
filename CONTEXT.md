@@ -10,9 +10,13 @@
 > - Widgets are stable; no active development. This doc + the README are the handoff.
 >
 > **Update 2026-08-21:** a **third vertical** — Stairlift / Treppenlift — was added
-> (`bundesland-widget-stairlift.html`, built by Antoine, PR #1). New Welt advertorial,
-> campaign `Stairlift DACH 3` (bcid `m6ujzemskr`, same Welt Ads account `382-370-6884`).
-> Article not live yet at time of writing.
+> (`bundesland-widget-stairlift.html`, built by Antoine, PR #1, merged). New Welt
+> advertorial, campaign `Stairlift DACH 3` (bcid `m6ujzemskr`, same Welt Ads account
+> `382-370-6884`). Widget is live on Pages and verified: served file matches `main`,
+> all 16 tiles build correctly, `gclid`/`wbraid` forward through, `utm_source` stays
+> pinned to `welt.de`. Remaining dependency is Welt's forwarding script on the new
+> article (see open items). Repo access: Antoine is now a collaborator (write) and
+> `main` is protected (PR + 1 approval; repo owner exempt).
 
 ---
 
@@ -77,10 +81,11 @@ Same branded `vergleich` funnels, with desktop/mobile chosen by the widget.
 
 The widget detects mobile vs. desktop; heat pump appends `#building-type`, solar `#immobilie`, stairlift `#lift-type` (these are the first-screen names in Heyflow).
 
-⚠️ **Stairlift runs on the generic `top10-anbieter.de` domain**, not a branded
-`vergleich.*` one like the other two — no branded Treppenlift funnel exists yet.
-If one is created, switching the widget is trivial, but the *article* CTA links
-would need a (chargeable) Welt change, so decide before the advertorial goes live.
+ℹ️ **Stairlift runs on the generic `top10-anbieter.de` domain**, not a branded
+`vergleich.*` one like the other two. This is **intentional** (Antoine, 2026-08-21):
+`treppenlift-2` is the funnel already live for stairlift, and no branded switch is
+planned. If that ever changes, the widget side is a one-line edit, but the *article*
+CTA links would need a chargeable Welt change.
 
 ---
 
@@ -188,6 +193,8 @@ Verified end-to-end 2026-07-03 (both pages, browser click-test + code review), r
 | HP DACH 4 Lovable LP dropping URL params (separate account, not Welt) | Julian | ⏳ Open |
 | iOS tap-does-nothing on article CTA links: Welt's `bottom.js` intercepts clicks on `.adcs-main a` (`preventDefault` + `window.open`); when iOS popup heuristics block `window.open`, nothing happens (long-press bypasses page JS and works). Fix requested: remove interception or fall back to `location.href` when `window.open` returns null. Widget tiles unaffected (inside iframe). | Welt IT (ticket via Klosik) | ⏳ Ticket created 2026-07-23; `bottom.js` unchanged as of same day — re-verify when IT reports back |
 | Article CTA links switched to mobile funnel URLs (`waermepumpe-mobile-2` / `solar-mobile3`), with `utm_content=intro/mid/outro` per position; params/bcids unchanged. | Klosik | ✅ Live + verified 2026-07-23 (6 links per page, widget untouched) |
+| **Param forwarding script on the new Treppenlift article.** The script is deployed **per page** — the Wärmepumpe/Photovoltaik pages got it separately in June/July. Without it on the Treppenlift page, no `gclid` reaches the funnel and Google-side conversion attribution won't work for Stairlift DACH 3 (bcid attribution in Tableau is unaffected). | Antoine → Welt | ⏳ Requested by email 2026-08-21 (widget link + script request); end-to-end test on the live article once Welt confirms |
+| Stairlift `utm_content` uses the lowercase `bundesland_xx` form vs. the bare `BY` on HP/solar. Harmless today; only matters if a Tableau view assumes one shape across all three widgets. | — | ℹ️ Known, accepted |
 
 ---
 
