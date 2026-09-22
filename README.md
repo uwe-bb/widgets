@@ -132,9 +132,12 @@ correct campaign in Tableau. Values verified against the
 
 ### Ad-click passthrough (LIVE)
 
-Both widgets forward `gclid`, `wbraid`, `gbraid`, `msclkid`, `matchtype`,
-`keyword`, `placement`, and `device` from the page URL / referrer to the tile
-links, for Google/Microsoft Ads attribution. `utm_source` / `utm_campaign` are
+All three widgets forward `gclid`, `wbraid`, `gbraid`, `msclkid`, `utm_term`,
+`matchtype`, `keyword`, `placement`, and `device` from the page URL / referrer
+to the tile links, for Google/Microsoft Ads attribution. `utm_term` was added
+2026-09-22 as the interim carrier for the Ads campaign ID (final URL suffix
+`utm_term={campaignid}`), because `utm_campaign` is still hardcoded to the month
+tag on the Welt pages — see the tracking spec v2 linked in `CONTEXT.md`. `utm_source` / `utm_campaign` are
 deliberately **not** forwarded — they stay hardcoded to `welt.de` / `hp_june26`
 so advertorial traffic always attributes to Welt. The passthrough is **live**
 since 2026-07-02: Welt's pages run a forwarding script that appends the article
